@@ -22,11 +22,18 @@ const Home: React.FC = () => {
     // 検索用の入力値と状態の管理
     const [searchValue, setSearchValue] = React.useState('');
 
-    // 検索リセット処理
-    const handleReset = () => {
-        setSearchValue('');
+    // 検索確定処理
+    const handleSearch = () => {
+        // ここから検索処理
+        console.log(searchValue +' で検索されました！');
     };
 
+    // 検索内容リセット処理
+    const handleReset = () => {
+        // ここからリセット処理
+        console.log('リセットされました！');
+        setSearchValue('');
+    };
 
   return (
     <div>
@@ -36,6 +43,7 @@ const Home: React.FC = () => {
       <TextInput
         value={searchValue} //現在の検索範囲
         onChange={(value) => setSearchValue(value)} //変更時の状態関係
+        onSearch={handleSearch}
         onReset={handleReset}
         placeholder="検索キーワードを入力"
       />
