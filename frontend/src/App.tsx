@@ -1,9 +1,10 @@
 import * as React from 'react';
-
+import Home from './pages/Home'
+import './index.scss';
 function App() {
   return (
     <>
-      <h1>表示テスト</h1>
+      <Home />
     </>
   )
 }
