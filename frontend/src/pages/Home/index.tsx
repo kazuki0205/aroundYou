@@ -4,7 +4,8 @@ import GeolocationStatus from '../../components/GeolocationStatus'; // Geolocati
 import TextInput from '../../components/TextInput'; // InputTextコンポーネントをインポート
 import styles from './style.module.scss'; // SCSSモジュールをインポート
 import useSearch from "./hooks";
-
+import { IconButton } from '@mui/material';
+import NavigationIcon from '@mui/icons-material/Navigation'; // ナビゲーションアイコンをインポート
 
 
 const Home: React.FC = () => {
@@ -50,9 +51,9 @@ const Home: React.FC = () => {
       />
 
       {/* 位置情報を手動で再取得するボタン */}
-      <button onClick={getPosition} className={styles.locationButton}>
-        位置情報を再取得
-      </button>
+      <IconButton onClick={getPosition} className={styles.locationButton} color="primary">
+        <NavigationIcon />
+      </IconButton>
     </div>
   );
 };
