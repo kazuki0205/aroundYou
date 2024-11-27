@@ -3,6 +3,8 @@ import { useGeolocated } from 'react-geolocated';
 import GeolocationStatus from '../../components/GeolocationStatus'; // GeolocationStatusコンポーネントをインポート
 import TextInput from '../../components/TextInput'; // InputTextコンポーネントをインポート
 import styles from './style.module.scss'; // SCSSモジュールをインポート
+import useSearch from "./hooks";
+
 
 
 const Home: React.FC = () => {
@@ -19,21 +21,13 @@ const Home: React.FC = () => {
     userDecisionTimeout: 5000, // ユーザーの許可を待つ時間（ミリ秒）
   });
   
-    // 検索用の入力値と状態の管理
-    const [searchValue, setSearchValue] = React.useState('');
-
-    // 検索確定処理
-    const handleSearch = () => {
-        // ここから検索処理
-        console.log(searchValue +' で検索されました！');
-    };
-
-    // 検索内容リセット処理
-    const handleReset = () => {
-        // ここからリセット処理
-        console.log('リセットされました！');
-        setSearchValue('');
-    };
+  // useSearchフックを使用して検索の状態を管理
+  const {
+    searchValue,
+    setSearchValue,
+    handleSearch,
+    handleReset,
+  } = useSearch();
 
   return (
     <div>
@@ -42,9 +36,9 @@ const Home: React.FC = () => {
       {/* 検索フィールドを表示 */}
       <TextInput
         value={searchValue} //現在の検索範囲
-        onChange={(value) => setSearchValue(value)} //変更時の状態関係
-        onSearch={handleSearch}
-        onReset={handleReset}
+        onChange={(value) => setSearchValue(value)} //入力されて変更されたときの状態関係
+        onSearch={handleSearch} // 検索ボタンが押されたときの処理
+        onReset={handleReset} // リセットボタンが押されたときの処理
         placeholder="検索キーワードを入力"
       />
 
