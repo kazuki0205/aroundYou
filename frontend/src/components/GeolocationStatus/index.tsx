@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Map from '../Map';
 import styles from './style.module.scss';
 
 // 位置情報の型定義
@@ -27,7 +26,7 @@ const GeolocationStatus: React.FC<GeolocationStatusProps> = ({
   } else if (!isGeolocationEnabled) {
     return <div className={styles.errorMessage}>位置情報サービスが有効になっていません。</div>;
   } else if (coords) {
-    return <Map latitude={coords.latitude} longitude={coords.longitude} />;
+    return <div>位置情報を取得しました。</div>;
   } else {
     return <div className={styles.loadingMessage}>位置情報を取得しています...</div>;
   }
