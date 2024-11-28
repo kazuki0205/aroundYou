@@ -26,10 +26,12 @@ const Map: React.FC<MapProps> = ({ latitude, longitude, restaurants }) => {
     lng: longitude,
   };
 
-  if (!googleMapsApiKey) {
-    console.error("Google Maps API Key is missing or not provided.");
-    return <div>Google Maps API Key is required to load the map.</div>;
-  }
+ // APIキーが存在しない場合のエラー表示
+ const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+ if (!googleMapsApiKey) {
+   console.error("Google Maps API Key is missing or not provided.");
+   return <div>Google Maps API Key is required to load the map.</div>;
+ }
 
   return (
     // LoadScript: Google Maps APIを読み込むためのコンポーネント
@@ -38,13 +40,15 @@ const Map: React.FC<MapProps> = ({ latitude, longitude, restaurants }) => {
       <GoogleMap
         mapContainerStyle={mapContainerStyle} // 地図のサイズを指定
         center={center} // 地図の中心の位置を設定
-        zoom={14} // 地図の拡大率を設定
+        zoom={16} // 地図の拡大率を設定
       >
         {/* 現在地を示すマーカー */}
         <Marker position={center} />
         {/* 各店舗のマーカーを表示 */}
-        {restaurants.map((restaurant, index) => (
-          <Marker key={index} position={{ lat: restaurant.lat, lng: restaurant.lng }} />
+        {restaurants && Array.isArray(restaurants) && restaurants.map((restaurant, index) => (
+          restaurant.lat && restaurant.lng && ( // 緯度経度が存在することもチェック
+            <Marker key={index} position={{ lat: Number(restaurant.lat), lng: Number(restaurant.lng) }} />
+          )
         ))}
       </GoogleMap>
     </LoadScript>
