@@ -23,9 +23,12 @@ export const searchRestrauntApi = async (lat: number, lng: number, keyword: stri
         lat: parseFloat(shop.lat),
         lng: parseFloat(shop.lng),
         address: shop.address,
+        catchCopy: shop.catch,
+        imageUrl: shop.photo.mobile.l
       }));
-  
+      // console.log(shops);
       return shops;
+      
 
     } catch (error) {
       console.error('近くの店舗を取得できませんでした。', error);
