@@ -14,10 +14,6 @@ const mapContainerStyle = {
   height: '600px',
 };
 
-// APIキーを代入し、代入できているかを確認
-  const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-  // console.log('Google Maps API Key:', googleMapsApiKey);
-
 // Mapコンポーネント: Google Mapsを表示するためのコンポーネントを定義
 const Map: React.FC<MapProps> = ({ latitude, longitude, restaurants }) => {
   // 地図の中心となる位置情報を定義

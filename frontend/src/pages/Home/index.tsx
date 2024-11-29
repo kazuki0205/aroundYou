@@ -52,7 +52,13 @@ const Home: React.FC = () => {
     // 現在地の情報が取得できていない場合にエラーメッセージを表示
     alert('現在地情報が取得できていません。もう一度位置情報を取得してください。');
     }
-};
+  };
+
+  // 検索リセット処理
+  const handleResetWithMap = () => {
+    handleReset();
+    setRestaurants([]); // 飲食店のマーカーをリセット
+  };
 
   return (
     <div>
@@ -62,7 +68,7 @@ const Home: React.FC = () => {
         value={searchValue} //現在の検索範囲
         onChange={(value) => setSearchValue(value)} //入力されて変更されたときの状態関係
         onSearch={handleSearchWithMap} // 検索ボタンが押されたときの処理
-        onReset={handleReset} // リセットボタンが押されたときの処理
+        onReset={handleResetWithMap} // リセットボタンが押されたときの処理
         placeholder="検索キーワードを入力"
       />
 
