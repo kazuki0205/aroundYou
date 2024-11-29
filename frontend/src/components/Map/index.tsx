@@ -47,7 +47,14 @@ const Map: React.FC<MapProps> = ({ latitude, longitude, restaurants }) => {
         {/* 各店舗のマーカーを表示 */}
         {restaurants && Array.isArray(restaurants) && restaurants.map((restaurant, index) => (
           restaurant.lat && restaurant.lng && ( // 緯度経度が存在することもチェック
-            <Marker key={index} position={{ lat: Number(restaurant.lat), lng: Number(restaurant.lng) }} />
+            <Marker 
+                key={index} 
+                position={{ lat: Number(restaurant.lat), lng: Number(restaurant.lng) }}
+                icon={{
+                    url: '/assets/image/marker.png',
+                    scaledSize: new window.google.maps.Size(40, 40) // アイコンサイズの調整
+                }}
+            />
           )
         ))}
       </GoogleMap>
