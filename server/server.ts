@@ -30,8 +30,8 @@ app.get('/api/hotpepper', async (req, res) => {
     });
     res.json(response.data);
     // 
-    console.log("ここからreq--------------------------------");
-    console.log(req.query);
+    // console.log("ここからreq--------------------------------");
+    // console.log(req.query);
     // console.log("ここからresponse--------------------------------");
     // console.log(response);
     // console.log("ここからresponse.data--------------------------------");
