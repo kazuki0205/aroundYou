@@ -1,0 +1,6 @@
+// ボタングループのコンテナスタイル
+.buttonContainer {
+  margin: 16px 0; // 上下のマージン
+  display: flex; // フレックスボックスを使用
+  justify-content: center; // 中央寄せ
+}

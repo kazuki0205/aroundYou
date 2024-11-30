@@ -22,12 +22,12 @@ const Map: React.FC<MapProps> = ({ latitude, longitude, restaurants }) => {
     lng: longitude,
   };
 
- // APIキーが存在しない場合のエラー表示
- const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
- if (!googleMapsApiKey) {
-   console.error("Google Maps API Key is missing or not provided.");
-   return <div>Google Maps API Key is required to load the map.</div>;
- }
+  // APIキーが存在しない場合のエラー表示
+  const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+  if (!googleMapsApiKey) {
+    console.error('Google Maps API Key is missing or not provided.');
+    return <div>Google Maps API Key is required to load the map.</div>;
+  }
 
   return (
     // LoadScript: Google Maps APIを読み込むためのコンポーネント
@@ -41,18 +41,25 @@ const Map: React.FC<MapProps> = ({ latitude, longitude, restaurants }) => {
         {/* 現在地を示すマーカー */}
         <Marker position={center} />
         {/* 各店舗のマーカーを表示 */}
-        {restaurants && Array.isArray(restaurants) && restaurants.map((restaurant, index) => (
-          restaurant.lat && restaurant.lng && ( // 緯度経度が存在することもチェック
-            <Marker 
-                key={index} 
-                position={{ lat: Number(restaurant.lat), lng: Number(restaurant.lng) }}
-                icon={{
+        {restaurants &&
+          Array.isArray(restaurants) &&
+          restaurants.map(
+            (restaurant, index) =>
+              restaurant.lat &&
+              restaurant.lng && ( // 緯度経度が存在することもチェック
+                <Marker
+                  key={index}
+                  position={{
+                    lat: Number(restaurant.lat),
+                    lng: Number(restaurant.lng),
+                  }}
+                  icon={{
                     url: '/assets/image/marker.png',
-                    scaledSize: new window.google.maps.Size(40, 40) // アイコンサイズの調整
-                }}
-            />
-          )
-        ))}
+                    scaledSize: new window.google.maps.Size(40, 40), // アイコンサイズの調整
+                  }}
+                />
+              ),
+          )}
       </GoogleMap>
     </LoadScript>
   );

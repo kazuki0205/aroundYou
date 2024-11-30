@@ -1,57 +1,75 @@
-import * as React from "react";
+import * as React from 'react';
 import { useGeolocated } from 'react-geolocated';
 import GeolocationStatus from '../../components/GeolocationStatus'; // GeolocationStatusコンポーネントをインポート
 import TextInput from '../../components/TextInput'; // InputTextコンポーネントをインポート
 import styles from './style.module.scss'; // SCSSモジュールをインポート
-import useSearch from "./hooks";
+import useSearch from './hooks';
 import { IconButton } from '@mui/material';
 import NavigationIcon from '@mui/icons-material/Navigation'; // ナビゲーションアイコンをインポート
 import { searchRestrauntApi } from '../../api/searchRestrauntApi'; // ナビゲーションアイコンをインポート
 import Map from '../../components/Map'; // Mapコンポーネントをインポート
-
+import RangeButton from '../../components/Button'; //Buttonコンポーネントをインポート
 
 const Home: React.FC = () => {
   // useGeolocatedフックを使用して現在地を取得
-  const {
-    coords,
-    isGeolocationAvailable,
-    isGeolocationEnabled,
-    getPosition,
-  } = useGeolocated({
-    positionOptions: {
-      enableHighAccuracy: true, // 高精度位置情報を取得
-    },
-    userDecisionTimeout: 5000, // ユーザーの許可を待つ時間（ミリ秒）
-  });
-  
+  const { coords, isGeolocationAvailable, isGeolocationEnabled, getPosition } =
+    useGeolocated({
+      positionOptions: {
+        enableHighAccuracy: true, // 高精度位置情報を取得
+      },
+      userDecisionTimeout: 5000, // ユーザーの許可を待つ時間（ミリ秒）
+    });
+
   // useSearchフックを使用して検索の状態を管理
-  const {
-    searchValue,
-    setSearchValue,
-    handleSearch,
-    handleReset,
-  } = useSearch();
+  const { searchValue, setSearchValue, handleSearch, handleReset } =
+    useSearch();
 
   // 店舗情報の状態管理
   const [restaurants, setRestaurants] = React.useState<any[]>([]);
 
+  // 検索範囲の状態管理
+  const [searchRange, setSearchRange] = React.useState<number>(1);
+
+  // 検索結果の有無を管理するstate追加
+  const [hasSearchResult, setHasSearchResult] = React.useState<boolean>(false);
+
   // 検索確定処理
   const handleSearchWithMap = async () => {
     if (coords) {
-    const { latitude, longitude } = coords;
-    try {
+      const { latitude, longitude } = coords;
+      try {
         // 現在地の緯度・経度と検索キーワードを使って、近くの店舗情報を取得
-        const fetchedRestaurants = await searchRestrauntApi(latitude, longitude, searchValue);
-        
+        const fetchedRestaurants = await searchRestrauntApi(
+          latitude,
+          longitude,
+          searchValue,
+          searchRange,
+        );
         // 取得した店舗情報を状態にセット
         setRestaurants(fetchedRestaurants);
-    } catch (error) {
+        setHasSearchResult(true);
+      } catch (error) {
         console.error('検索に失敗しました:', error);
-    }
+        setHasSearchResult(false);
+      }
     } else {
-    // 現在地の情報が取得できていない場合にエラーメッセージを表示
-    alert('現在地情報が取得できていません。もう一度位置情報を取得してください。');
+      // 現在地の情報が取得できていない場合にエラーメッセージを表示
+      alert(
+        '現在地情報が取得できていません。もう一度位置情報を取得してください。',
+      );
     }
+  };
+
+  // useEffectを使用して検索範囲が変更されたときに自動的に検索を行う
+  React.useEffect(() => {
+    if (searchValue) {
+      handleSearchWithMap();
+    }
+  }, [searchRange]);
+
+  // 検索範囲が変更された時の処理
+  const handleRangeChange = (range: number) => {
+    setSearchRange(range); // 選択された範囲をstateに保存
   };
 
   // 検索リセット処理
@@ -74,24 +92,39 @@ const Home: React.FC = () => {
 
       {/* GeolocationStatusコンポーネントに必要な情報を渡す */}
       <GeolocationStatus
-        coords={coords ? { latitude: coords.latitude, longitude: coords.longitude } : null}
+        coords={
+          coords
+            ? { latitude: coords.latitude, longitude: coords.longitude }
+            : null
+        }
         isGeolocationAvailable={isGeolocationAvailable}
         isGeolocationEnabled={isGeolocationEnabled}
       />
 
       {/* Mapコンポーネントを表示 */}
       {coords && (
-        <Map 
-            latitude={coords.latitude}
-            longitude={coords.longitude}
-            restaurants={restaurants}
+        <Map
+          latitude={coords.latitude}
+          longitude={coords.longitude}
+          restaurants={restaurants}
         />
       )}
 
       {/* 位置情報を手動で再取得するボタン */}
-      <IconButton onClick={getPosition} className={styles.locationButton} color="primary">
+      <IconButton
+        onClick={getPosition}
+        className={styles.locationButton}
+        color="primary"
+      >
         <NavigationIcon />
       </IconButton>
+
+      {/* Buttonコンポーネントを表示 */}
+      <RangeButton
+        onRangeChange={handleRangeChange}
+        currentRange={searchRange}
+        isVisible={hasSearchResult}
+      />
     </div>
   );
 };

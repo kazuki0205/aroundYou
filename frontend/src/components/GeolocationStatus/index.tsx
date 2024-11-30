@@ -3,9 +3,9 @@ import styles from './style.module.scss';
 
 // 位置情報の型定義
 type Coordinates = {
-    latitude: number; // 緯度
-    longitude: number; // 経度
-  } | null;
+  latitude: number; // 緯度
+  longitude: number; // 経度
+} | null;
 
 // GeolocationStatus コンポーネントのプロパティ型
 type GeolocationStatusProps = {
@@ -19,16 +19,25 @@ const GeolocationStatus: React.FC<GeolocationStatusProps> = ({
   isGeolocationAvailable,
   isGeolocationEnabled,
 }) => {
-    
   // 位置情報取得に関する状態に応じて表示
   if (!isGeolocationAvailable) {
-    return <div className={styles.errorMessage}>このブラウザは位置情報の取得をサポートしていません。</div>;
+    return (
+      <div className={styles.errorMessage}>
+        このブラウザは位置情報の取得をサポートしていません。
+      </div>
+    );
   } else if (!isGeolocationEnabled) {
-    return <div className={styles.errorMessage}>位置情報サービスが有効になっていません。</div>;
+    return (
+      <div className={styles.errorMessage}>
+        位置情報サービスが有効になっていません。
+      </div>
+    );
   } else if (coords) {
     return <div>位置情報を取得しました。</div>;
   } else {
-    return <div className={styles.loadingMessage}>位置情報を取得しています...</div>;
+    return (
+      <div className={styles.loadingMessage}>位置情報を取得しています...</div>
+    );
   }
 };
 

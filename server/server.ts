@@ -29,6 +29,14 @@ app.get('/api/hotpepper', async (req, res) => {
       },
     });
     res.json(response.data);
+    // 
+    console.log("ここからreq--------------------------------");
+    console.log(req.query);
+    // console.log("ここからresponse--------------------------------");
+    // console.log(response);
+    // console.log("ここからresponse.data--------------------------------");
+    // console.log(response.data);
+  
   } catch (error) {
     console.error('APIリクエスト中にエラーが発生しました:', error);
     res.status(500).send('APIリクエスト中にエラーが発生しました');
