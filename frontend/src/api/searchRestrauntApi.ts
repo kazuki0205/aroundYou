@@ -24,6 +24,7 @@ export const searchRestrauntApi = async (
     const shops = response.data.results.shop.map((shop: any) => ({
       id: shop.id,
       name: shop.name,
+      genre: shop.genre.name,
       lat: parseFloat(shop.lat),
       lng: parseFloat(shop.lng),
       address: shop.address,
