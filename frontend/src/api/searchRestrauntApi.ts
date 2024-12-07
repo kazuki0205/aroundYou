@@ -20,6 +20,9 @@ export const searchRestrauntApi = async (
       },
     });
 
+    // console.log(response.data.results);
+    
+
     // データが正しく取得できたか確認し、取得したshopデータを加工して返す
     const shops = response.data.results.shop.map((shop: any) => ({
       id: shop.id,
@@ -30,8 +33,12 @@ export const searchRestrauntApi = async (
       address: shop.address,
       catchCopy: shop.catch,
       imageUrl: shop.photo.mobile.l,
-    }));
+      openingHours: shop.open,
+      priceRange: shop.budget.name,
+      nearestStation: shop.mobile_access
 
+    }));
+    
     return shops;
   } catch (error) {
     console.error('近くの店舗を取得できませんでした。', error);

@@ -24,6 +24,7 @@ app.get('/api/hotpepper', async (req, res) => {
         lat,
         lng,
         range,
+        count: 100,
         keyword,
         format: 'json',
       },

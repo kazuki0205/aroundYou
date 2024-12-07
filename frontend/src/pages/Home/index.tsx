@@ -1,14 +1,20 @@
 import * as React from 'react';
 import { useGeolocated } from 'react-geolocated';
 import GeolocationStatus from '../../components/GeolocationStatus'; // GeolocationStatusコンポーネントをインポート
-import TextInput from '../../components/TextInput'; // InputTextコンポーネントをインポート
-import styles from './style.module.scss'; // SCSSモジュールをインポート
-import useSearch from './hooks';
-import { IconButton } from '@mui/material';
+import TextInput from '../../components/TextInput'; // TextInputコンポーネントをインポート
+import useLocalSearch from './hooks';
+import { Container, Box, Fab, Typography } from '@mui/material';
 import NavigationIcon from '@mui/icons-material/Navigation'; // ナビゲーションアイコンをインポート
-import { searchRestrauntApi } from '../../api/searchRestrauntApi'; // ナビゲーションアイコンをインポート
+import { searchRestrauntApi } from '../../api/searchRestrauntApi'; // APIをインポート
 import Map from '../../components/Map'; // Mapコンポーネントをインポート
-import RangeButton from '../../components/Button'; //Buttonコンポーネントをインポート
+import RangeButton from '../../components/Button'; // Buttonコンポーネントをインポート
+import RestaurantCard from '../../components/Card'; // Cardコンポーネントをインポート
+import styles from './style.module.scss';
+import { calculateDistance } from '../../utils/distance';
+import { useSearch } from '../../contexts/SearchContext';
+import Loading from '../../components/Loading'; // Loadingコンポーネントをインポート
+import Pager from '../../components/Pager'; // Pagerコンポーネントをインポート
+import Splash from '../../components/Splash'; //Splashコンポーネントをインポート
 
 const Home: React.FC = () => {
   // useGeolocatedフックを使用して現在地を取得
@@ -21,23 +27,51 @@ const Home: React.FC = () => {
     });
 
   // useSearchフックを使用して検索の状態を管理
-  const { searchValue, setSearchValue, handleSearch, handleReset } =
-    useSearch();
+  const { searchValue, setSearchValue, handleReset } = useLocalSearch();
+  const [isInitialLoading, setIsInitialLoading] = React.useState(true); // 初期ローディング
+  const [isLoading, setIsLoading] = React.useState(false); // 検索時のローディング
+  
+  // グローバル状態の取得
+  const {
+    restaurants,
+    setRestaurants,
+    searchRange,
+    setSearchRange,
+    hasSearchResult,
+    setHasSearchResult
+  } = useSearch();
 
-  // 店舗情報の状態管理
-  const [restaurants, setRestaurants] = React.useState<any[]>([]);
+  React.useEffect(() => {
+    if (coords) {
+      // 位置情報取得後、少し遅延を入れてスプラッシュ画面を非表示に
+      setTimeout(() => {
+        setIsInitialLoading(false);
+      }, 2000); // 1秒後に非表示
+    }
+  }, [coords]);
 
-  // 検索範囲の状態管理
-  const [searchRange, setSearchRange] = React.useState<number>(1);
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const ITEMS_PER_PAGE = 10; // 1ページあたりの表示件数
 
-  // 検索結果の有無を管理するstate追加
-  const [hasSearchResult, setHasSearchResult] = React.useState<boolean>(false);
+  const paginatedRestaurants = React.useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return restaurants.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [restaurants, currentPage]);
+
+   // ページ変更時のハンドラー
+    const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // ページ上部へスムーズにスクロール
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   // 検索確定処理
   const handleSearchWithMap = async () => {
     if (coords) {
       const { latitude, longitude } = coords;
       try {
+        setIsLoading(true); 
+        setCurrentPage(1);
         // 現在地の緯度・経度と検索キーワードを使って、近くの店舗情報を取得
         const fetchedRestaurants = await searchRestrauntApi(
           latitude,
@@ -45,20 +79,38 @@ const Home: React.FC = () => {
           searchValue,
           searchRange,
         );
-        // 取得した店舗情報を状態にセット
-        setRestaurants(fetchedRestaurants);
+  
+        // 店舗ごとの距離を計算
+        const restaurantsWithDistance = fetchedRestaurants
+          .map((restaurant: any) => {
+            const restaurantLat = parseFloat(restaurant.lat || '0');
+            const restaurantLng = parseFloat(restaurant.lng || '0');
+  
+            if (restaurantLat === 0 || restaurantLng === 0) {
+              return null; // 無効なデータを除外
+            }
+  
+            return {
+              ...restaurant,
+              distance: calculateDistance(latitude, longitude, restaurantLat, restaurantLng),
+            };
+          })
+  
+        // 結果を状態にセット
+        setRestaurants(restaurantsWithDistance);
         setHasSearchResult(true);
       } catch (error) {
         console.error('検索に失敗しました:', error);
         setHasSearchResult(false);
+      } finally {
+        setIsLoading(false);
       }
     } else {
       // 現在地の情報が取得できていない場合にエラーメッセージを表示
-      alert(
-        '現在地情報が取得できていません。もう一度位置情報を取得してください。',
-      );
+      // alert('現在地情報が取得できていません。もう一度位置情報を取得してください。');
     }
   };
+
 
   // useEffectを使用して検索範囲が変更されたときに自動的に検索を行う
   React.useEffect(() => {
@@ -72,60 +124,131 @@ const Home: React.FC = () => {
     setSearchRange(range); // 選択された範囲をstateに保存
   };
 
-  // 検索リセット処理
   const handleResetWithMap = () => {
-    handleReset();
-    setRestaurants([]); // 飲食店のマーカーをリセット
+  handleReset();
+  setCurrentPage(1);
+  setRestaurants([]);
+  setHasSearchResult(false);
+};
+
+  // マーカークリック時のハンドラー
+  const handleMarkerClick = (restaurantId: string) => {
+    const restaurantIndex = restaurants.findIndex(r => r.id === restaurantId);
+    if (restaurantIndex === -1) return;
+
+      // 該当の店舗が含まれるページを計算
+    const targetPage = Math.floor(restaurantIndex / ITEMS_PER_PAGE) + 1;
+
+    // ページを更新
+    setCurrentPage(targetPage);
+
+    // 少し遅延を入れてスクロール（ページ更新後のDOMの更新を待つ）
+    setTimeout(() => {
+      const element = document.getElementById(`restaurant-${restaurantId}`);
+      if (element) {
+        element.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        });
+  
+        // カードのハイライト表示
+        element.style.transition = 'background-color 0.3s';
+        element.style.backgroundColor = '#c7c7c7';
+        setTimeout(() => {
+          element.style.backgroundColor = '';
+        }, 1800);
+      }
+    }, 100);
   };
 
   return (
-    <div>
-      {/* <h1 className={styles.title}>現在地を表示</h1> */}
-      {/* 検索フィールドを表示 */}
-      <TextInput
-        value={searchValue} //現在の検索範囲
-        onChange={(value) => setSearchValue(value)} //入力されて変更されたときの状態関係
-        onSearch={handleSearchWithMap} // 検索ボタンが押されたときの処理
-        onReset={handleResetWithMap} // リセットボタンが押されたときの処理
-        placeholder="検索キーワードを入力"
-      />
-
-      {/* GeolocationStatusコンポーネントに必要な情報を渡す */}
-      <GeolocationStatus
-        coords={
-          coords
-            ? { latitude: coords.latitude, longitude: coords.longitude }
-            : null
-        }
-        isGeolocationAvailable={isGeolocationAvailable}
-        isGeolocationEnabled={isGeolocationEnabled}
-      />
-
-      {/* Mapコンポーネントを表示 */}
-      {coords && (
-        <Map
-          latitude={coords.latitude}
-          longitude={coords.longitude}
-          restaurants={restaurants}
+    <Box className={styles.mainContainer}>
+      <Splash isVisible={isInitialLoading} />
+      <Loading isLoading={isLoading} />
+      {/* 検索UI */}
+      <Container maxWidth="md" className={styles.searchUI}>
+        <TextInput
+          value={searchValue}
+          onChange={(value) => setSearchValue(value)}
+          onSearch={handleSearchWithMap}
+          onReset={handleResetWithMap}
+          placeholder="検索キーワードを入力"
         />
+
+        <GeolocationStatus
+          coords={coords ? { latitude: coords.latitude, longitude: coords.longitude } : null}
+          isGeolocationAvailable={isGeolocationAvailable}
+          isGeolocationEnabled={isGeolocationEnabled}
+        />
+      </Container>
+
+      {/* 地図エリア */}
+      {coords && (
+        <Box className={`${styles.mapContainer} ${hasSearchResult ? styles.hasResults : ''}`}>
+          <Map
+            latitude={coords.latitude}
+            longitude={coords.longitude}
+            restaurants={restaurants}
+            hasSearchResult={hasSearchResult} 
+            onMarkerClick={handleMarkerClick} 
+          />
+        </Box>
       )}
 
-      {/* 位置情報を手動で再取得するボタン */}
-      <IconButton
-        onClick={getPosition}
-        className={styles.locationButton}
-        color="primary"
-      >
-        <NavigationIcon />
-      </IconButton>
+      {/* 範囲選択ボタン */}
+      {hasSearchResult && (
+        <Box className={styles.optionalButtons}>
+          <RangeButton
+            onRangeChange={handleRangeChange}
+            currentRange={searchRange}
+            isVisible={hasSearchResult}
+          />
+          {/* 位置情報再取得ボタン */}
+          <Fab
+            color="primary"
+            onClick={getPosition}
+            className={styles.locationButton}
+          >
+            <NavigationIcon />
+          </Fab>
+        </Box>
+      )}
 
-      {/* Buttonコンポーネントを表示 */}
-      <RangeButton
-        onRangeChange={handleRangeChange}
-        currentRange={searchRange}
-        isVisible={hasSearchResult}
-      />
-    </div>
+      {/* 検索結果カード */}
+      {hasSearchResult && (
+        <Box className={styles.searchResults}>
+          <Typography className={styles.resultsTitle} variant="subtitle2">
+            検索結果: {restaurants.length}件
+          </Typography>
+
+          {paginatedRestaurants.map((restaurant) => (
+            <RestaurantCard
+              key={restaurant.id}
+              id={restaurant.id}
+              name={restaurant.name}
+              genre={restaurant.genre}
+              imageUrl={restaurant.imageUrl}
+              address={restaurant.address}
+              distance={restaurant.distance}
+              openingHours={restaurant.openingHours}
+              priceRange={restaurant.priceRange}
+              phone={restaurant.phone}
+              nearestStation={restaurant.nearestStation}
+              budget={restaurant.budget}
+            />
+          ))}
+          {restaurants.length > ITEMS_PER_PAGE && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', my: 3 }}>
+              <Pager
+                current={currentPage}
+                lastPage={Math.ceil(restaurants.length / ITEMS_PER_PAGE)}
+                onChangePage={handlePageChange}
+              />
+            </Box>
+          )}
+        </Box>
+      )}
+    </Box>
   );
 };
 

@@ -8,19 +8,19 @@ interface RangeButtonProps {
   currentRange: number; // 現在選択されている範囲
   isVisible: boolean; // ボタンの表示/非表示を制御
 }
-
 const RangeButton: React.FC<RangeButtonProps> = ({
   onRangeChange,
   currentRange,
   isVisible,
 }) => {
+
   // 表示条件をチェック
   if (!isVisible) return null;
   // 検索範囲ボタンの選択肢を定義
   const ranges = [
     { value: 1, label: '300m' }, // value: 検索範囲, label: ユーザーに表示するテキスト
     { value: 2, label: '500m' },
-    { value: 4, label: '2000m' },
+    { value: 3, label: '1km' },
   ];
 
   return (

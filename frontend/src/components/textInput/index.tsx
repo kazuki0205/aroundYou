@@ -44,7 +44,7 @@ const TextInput: React.FC<TextInputProps> = ({
         placeholder={placeholder}
         fullWidth
         className={styles.input}
-        sx={{ flex: 1 }}
+        sx={{ flex: 1 , backgroundColor: "white"}}
       />
 
       {/* 検索確定ボタン、onSearchが送られてきている場合のみ表示 */}

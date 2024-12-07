@@ -1,14 +1,76 @@
-.title {
-  font-size: 24px;
-  margin-bottom: 20px;
+.mainContainer {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.searchUI {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  background-color: none;
+  padding: 16px;   
+}
+
+.mapContainer {
+  position: relative;
+  width: 100%;
+  transition: height 0.3s ease;
+  height: calc(100vh - 100px); /* 検索前の高さ */
+
+  &.hasResults {
+    height: calc(100vh - 450px); /* 検索後の高さ */
+  }
+
+  @media (max-width: 600px) {
+    height: calc(100vh - 300px); /* 小さい画面向けのスタイル */
+  }
+}
+
+.optionalButtons {
+  position: fixed;
+  bottom: calc(300px + 16px); // searchResultsの高さ + マージン
+  left: 50%;
+  bottom: 41%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 100px;
+  z-index: 2;
+  padding: 8px;
 }
 
 .locationButton {
-  padding: 10px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+.searchResults {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 300px;
+  overflow-y: auto;
+  background-color: white;
+  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.3);
+  padding: 16px;
+  padding-top: 36px;
+  z-index: 1;
+}
+
+.resultsTitle {
+  margin-bottom: 8px; 
+  font-size: 0.8rem;
+  color: #000000; 
+  position: fixed;
+  background-color: #ffffff;
+  width: 100%;
+  top: 60%;
+  left: 6px;
+  padding: 7px 10px;
 }

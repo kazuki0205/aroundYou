@@ -1,5 +1,4 @@
 import * as React from 'react';
-import styles from './style.module.scss';
 
 // 位置情報の型定義
 type Coordinates = {
@@ -19,25 +18,20 @@ const GeolocationStatus: React.FC<GeolocationStatusProps> = ({
   isGeolocationAvailable,
   isGeolocationEnabled,
 }) => {
+
   // 位置情報取得に関する状態に応じて表示
   if (!isGeolocationAvailable) {
-    return (
-      <div className={styles.errorMessage}>
-        このブラウザは位置情報の取得をサポートしていません。
-      </div>
-    );
+    console.error('このブラウザは位置情報の取得をサポートしていません。');
+    return null;
   } else if (!isGeolocationEnabled) {
-    return (
-      <div className={styles.errorMessage}>
-        位置情報サービスが有効になっていません。
-      </div>
-    );
+    console.log('位置情報サービスが有効になっていません。');
+    return null;
   } else if (coords) {
-    return <div>位置情報を取得しました。</div>;
+    console.log('位置情報を取得しました。');
+    return null;
   } else {
-    return (
-      <div className={styles.loadingMessage}>位置情報を取得しています...</div>
-    );
+    console.log('位置情報を取得しています...');
+    return null;
   }
 };
 

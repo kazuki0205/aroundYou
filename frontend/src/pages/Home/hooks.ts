@@ -1,9 +1,14 @@
-import { useState } from 'react';
+import { useSearch } from '../../contexts/SearchContext';
 
 // 検索に関する状態と処理をまとめたフック
-const useSearch = () => {
-  // 検索用の入力値の状態管理
-  const [searchValue, setSearchValue] = useState('');
+const useLocalSearch = () => {
+  const { 
+    searchValue, 
+    setSearchValue,
+    setRestaurants,
+    setSearchRange,
+    setHasSearchResult 
+  } = useSearch();
 
   // 検索確定処理
   const handleSearch = () => {
@@ -14,6 +19,9 @@ const useSearch = () => {
   const handleReset = () => {
     console.log('リセットされました！');
     setSearchValue('');
+    setRestaurants([]);  // 検索結果をクリア
+    setSearchRange(1);   // 検索範囲を初期値に戻す
+    setHasSearchResult(false); // 検索結果の表示状態をリセット
   };
 
   // フックとして返す値
@@ -25,4 +33,4 @@ const useSearch = () => {
   };
 };
 
-export default useSearch;
+export default useLocalSearch;

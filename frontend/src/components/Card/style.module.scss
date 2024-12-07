@@ -1,0 +1,67 @@
+.cardContainer {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 1rem;
+  width: 100%;
+  height: 120px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.imageContainer {
+  width: 120px;
+  height: 100%;
+  overflow: hidden;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.detailsContainer {
+  flex: 1;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.genre {
+  font-size: 0.85rem;
+  color: #757575; // グレー
+  margin-bottom: 0.5rem;
+}
+
+.name {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #333; // 濃いグレー
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.address {
+  font-size: 0.9rem;
+  color: #757575; // グレー
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.distance {
+  font-size: 0.85rem;
+  color: #009688; // 緑
+  margin-top: 0.5rem;
+}
