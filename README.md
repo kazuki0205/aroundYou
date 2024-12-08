@@ -10,8 +10,7 @@ Around You | グルメの旅を、近くから<br>
 Around Youはあなたの生活とデリシャスを応援します。<br>
 
 ## 対象OSおよびブラウザ(ver.含む)
-対象OS: Windows 10 / 11, macOS  
-主要ブラウザ: Google Chrome, Microsoft Edge, Safari, Firefox, Sleipnir<br>
+主要ブラウザ: Google Chrome, Microsoft Edge, Safari, Firefox<br>
 
 
 ## 開発環境/言語
