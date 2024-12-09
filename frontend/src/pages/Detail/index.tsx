@@ -38,7 +38,8 @@ const Detail: React.FC = () => {
   }
 
   const handleBack = () => {
-    navigate(-1);
+    navigate('/', { state: { skipSplash: true } }); //スプラッシュスクローンをスキップする値を送信
+
   };
 
   return (

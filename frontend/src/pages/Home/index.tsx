@@ -15,6 +15,7 @@ import { useSearch } from '../../contexts/SearchContext';
 import Loading from '../../components/Loading'; // Loadingコンポーネントをインポート
 import Pager from '../../components/Pager'; // Pagerコンポーネントをインポート
 import Splash from '../../components/Splash'; //Splashコンポーネントをインポート
+import { useLocation } from 'react-router-dom';
 
 const Home: React.FC = () => {
   // useGeolocatedフックを使用して現在地を取得
@@ -26,9 +27,11 @@ const Home: React.FC = () => {
       userDecisionTimeout: 5000, // ユーザーの許可を待つ時間（ミリ秒）
     });
 
+  const location = useLocation();
+
   // useSearchフックを使用して検索の状態を管理
   const { searchValue, setSearchValue, handleReset } = useLocalSearch();
-  const [isInitialLoading, setIsInitialLoading] = React.useState(true); // 初期ローディング
+  const [isInitialLoading, setIsInitialLoading] = React.useState(location.state?.skipSplash ? false : true); // 初期ローディング
   const [isLoading, setIsLoading] = React.useState(false); // 検索時のローディング
   
   // グローバル状態の取得
@@ -42,13 +45,13 @@ const Home: React.FC = () => {
   } = useSearch();
 
   React.useEffect(() => {
-    if (coords) {
+    if (coords && !location.state?.skipSplash) {
       // 位置情報取得後、少し遅延を入れてスプラッシュ画面を非表示に
       setTimeout(() => {
         setIsInitialLoading(false);
       }, 2000); // 1秒後に非表示
     }
-  }, [coords]);
+  }, [coords, location.state?.skipSplash]); 
 
   const [currentPage, setCurrentPage] = React.useState(1);
   const ITEMS_PER_PAGE = 10; // 1ページあたりの表示件数
