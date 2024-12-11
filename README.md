@@ -225,17 +225,17 @@ HOTPEPPER_API_KEY=*****
 1. バックエンドの起動:
 ```bash
 cd server
-npx ts-node server.ts  
+npm start  
 # または
-yarn ts-node server.ts
+yarn start
 ```
 
 2. フロントエンドの起動:
 ```bash
 cd frontend
-npm run dev
+npm start  
 # または
-yarn dev
+yarn start
 ```
 
 アプリケーションは以下のURLでアクセス可能になります：

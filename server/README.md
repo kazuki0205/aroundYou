@@ -1,11 +1,11 @@
-# aroundYou フロントエンド
+# aroundYou バックエンド
 
 ### インストール手順
 1. 依存パッケージのインストール
 
-フロントエンド:
+バックエンド:
 ```bash
-cd frontend
+cd server
 npm install
 # または
 yarn install
@@ -13,20 +13,20 @@ yarn install
 
 2. 環境変数の設定
 
-フロントエンド (.env):
+バックエンド (.env):
 ```
-VITE_GOOGLE_MAPS_API_KEY=*****
-VITE_BACKEND_API_URL=http://localhost:5001
+PORT=5001
+HOTPEPPER_API_KEY=*****
 ```
 
 ### 起動方法
-1. フロントエンドの起動:
+1. バックエンドの起動:
 ```bash
-cd frontend
-npm start
+cd server
+npm start  
 # または
 yarn start
 ```
 
 アプリケーションは以下のURLでアクセス可能になります：
-- フロントエンド: http://localhost:5173
+- バックエンド: http://localhost:5001
