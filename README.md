@@ -178,6 +178,66 @@ MUIを初めて使用し、コンポーネント設計時に活用すること�
 
 ・**追加機能の段階的な実装:**  
 マップ上への検索範囲可視化など、今後は最小機能から段階的に拡張することで、後からでも対処しやすい実装プロセスを目指したい。
+<br>
 
+## 開発環境のセットアップ
+### インストール手順
 
+1. リポジトリのクローン
+```bash
+git clone 
+cd 
+```
 
+2. 依存パッケージのインストール
+
+フロントエンド:
+```bash
+cd frontend
+npm install
+# または
+yarn install
+```
+
+バックエンド:
+```bash
+cd server
+npm install
+# または
+yarn install
+```
+
+3. 環境変数の設定
+
+フロントエンド (.env):
+```
+VITE_GOOGLE_MAPS_API_KEY=*****
+VITE_BACKEND_API_URL=http://localhost:5001
+```
+
+バックエンド (.env):
+```
+PORT=5001
+HOTPEPPER_API_KEY=*****
+```
+
+### 起動方法
+1. バックエンドの起動:
+```bash
+cd server
+npx ts-node server.ts  
+# または
+yarn ts-node server.ts
+```
+
+2. フロントエンドの起動:
+```bash
+cd frontend
+npm run dev
+# または
+yarn dev
+```
+
+アプリケーションは以下のURLでアクセス可能になります：
+- フロントエンド: http://localhost:5173
+- バックエンド: http://localhost:5001
